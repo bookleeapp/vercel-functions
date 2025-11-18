@@ -1,0 +1,12 @@
+{
+  "name": "vercel-functions",
+  "version": "1.0.0",
+  "description": "A simple proxy API deployed on Vercel",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^28.0.0"
+  }
+}
