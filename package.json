@@ -1,6 +1,7 @@
 {
   "name": "vercel-functions",
   "version": "1.0.0",
+  "type": "module",
   "description": "A simple proxy API deployed on Vercel",
   "scripts": {
     "dev": "vercel dev"
