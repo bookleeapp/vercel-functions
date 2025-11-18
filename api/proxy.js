@@ -29,7 +29,6 @@ export default async function handler(request) {
     }
 
     const incoming = await request.json();
-
     const { url, method = "GET", headers = {}, body = null } = incoming;
 
     if (!url) {
@@ -42,19 +41,34 @@ export default async function handler(request) {
       });
     }
 
-    // Create safe headers - filter out any problematic headers
+    // Create safe headers - support both object and array formats
     const safeHeaders = new Headers();
-    for (const key in headers) {
-      if (
-        key.toLowerCase() !== "host" &&
-        key.toLowerCase() !== "content-length" &&
-        !key.toLowerCase().startsWith("cf-")
-      ) {
-        safeHeaders.set(key, headers[key]);
+
+    if (Array.isArray(headers)) {
+      headers.forEach(({ key, value }) => {
+        const lowerKey = key.toLowerCase();
+        if (
+          lowerKey !== "host" &&
+          lowerKey !== "content-length" &&
+          !lowerKey.startsWith("cf-")
+        ) {
+          safeHeaders.set(key, value);
+        }
+      });
+    } else {
+      for (const key in headers) {
+        const lowerKey = key.toLowerCase();
+        if (
+          lowerKey !== "host" &&
+          lowerKey !== "content-length" &&
+          !lowerKey.startsWith("cf-")
+        ) {
+          safeHeaders.set(key, headers[key]);
+        }
       }
     }
 
-    // Add a reasonable User-Agent if not provided
+    // Add a default User-Agent if missing
     if (!safeHeaders.has("User-Agent")) {
       safeHeaders.set(
         "User-Agent",
@@ -81,7 +95,6 @@ export default async function handler(request) {
       "Access-Control-Allow-Origin": "*",
     });
 
-    // Copy other safe headers
     for (const [key, value] of response.headers.entries()) {
       const lowerKey = key.toLowerCase();
       if (!["set-cookie", "content-encoding"].includes(lowerKey)) {
