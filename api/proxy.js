@@ -41,6 +41,22 @@ export default async function handler(request) {
       });
     }
 
+    // Handle body formats (object, array, string)
+    let normalizedBody = null;
+
+    if (Array.isArray(body)) {
+      // Convert [{ key, value }] → { key: value }
+      normalizedBody = {};
+      body.forEach(({ key, value }) => {
+        if (key !== undefined) {
+          normalizedBody[key] = value;
+        }
+      });
+    } else {
+      // If body is already object or string
+      normalizedBody = body;
+    }
+
     // Create safe headers - support both object and array formats
     const safeHeaders = new Headers();
 
@@ -82,8 +98,11 @@ export default async function handler(request) {
     };
 
     // Only add body for methods that support it
-    if (body && ["POST", "PUT", "PATCH"].includes(method.toUpperCase())) {
-      fetchOptions.body = JSON.stringify(body);
+    if (
+      normalizedBody &&
+      ["POST", "PUT", "PATCH"].includes(method.toUpperCase())
+    ) {
+      fetchOptions.body = JSON.stringify(normalizedBody);
     }
 
     const response = await fetch(url, fetchOptions);
