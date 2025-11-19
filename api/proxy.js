@@ -18,15 +18,15 @@ export default async function handler(request) {
 
   try {
     // Only allow POST requests
-    if (request.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Method not allowed" }), {
-        status: 405,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      });
-    }
+    // if (request.method !== "POST") {
+    //   return new Response(JSON.stringify({ error: "Method not allowed" }), {
+    //     status: 405,
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "Access-Control-Allow-Origin": "*",
+    //     },
+    //   });
+    // }
 
     const incoming = await request.json();
     const { url, method = "GET", headers = {}, body = null } = incoming;
